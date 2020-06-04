@@ -1,10 +1,10 @@
-version: 2.1 
+version: 2.1
 orbs:
   node: circleci/node@2.1.0
 jobs:
   build-and-test:
   build:
-    executor: 
+    executor:
       name: node/default
     steps:
       - checkout
