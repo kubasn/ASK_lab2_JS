@@ -8,8 +8,9 @@ jobs:
       name: node/default
     steps:
       - checkout
+      - setup_remote_docker
       
-  testServer:
+  test-server:
     executor:
       name: node/default
     steps:
@@ -22,8 +23,8 @@ jobs:
       - run:
           command: npm test
           working_directory: ./server
-  
-  testKlient:
+          
+  test-client:
     executor:
       name: node/default
     steps:
@@ -34,14 +35,55 @@ jobs:
       - run:
           command: npm test
           working_directory: ./client
+  
+  docker:
+    machine: true
+    steps:
+       - checkout
+       - run:
+           command: |
+              echo "$DOCKERHUB_PASSWORD" | docker login -u "kubasn" --password-stdin
+              sudo docker build ./db -t kubasn/node-react-db
+              sudo docker push kubasn/node-react-db:latest
+              
+       - run:
+           command: |
+              echo "$DOCKERHUB_PASSWORD" | docker login -u "kubasn" --password-stdin
+              sudo docker build ./server -t kubasn/node-svr
+              sudo docker push kubasn/node-svr
+              
+       - run:
+           command: |
+              echo "$DOCKERHUB_PASSWORD" | docker login -u "kubasn" --password-stdin
+              sudo docker build ./client -t kubasn/cra-client
+              sudo docker push kubasn/cra-client
           
+            
+      
+            
 workflows:
     build-and-test:
       jobs:
-        - build
-        - testServer:
-            requires:
-                - build
-        - testKlient:
-            requires:
-                - build
+        - build:
+          filters:
+            branches:
+              only:
+                - master
+        - test-server:
+           requires:
+               - build
+           filters:
+             branches:
+               only:
+                 - master
+        - test-client:
+           requires:
+               - build
+           filters:
+             branches:
+               only:
+                 - master
+        - docker:
+           requires:
+           - test-server
+           - test-client
