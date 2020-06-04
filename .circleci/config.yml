@@ -9,7 +9,7 @@ jobs:
  steps:
  - checkout
 
- test1:
+ acceptance_test_1:
        executor: 
       name: node/default
       - node/install-packages:
@@ -33,7 +33,7 @@ workflows:
     build-and-test:
       jobs:
         - build-and-test
-        test1:
+        acceptance_test_1:
         reguires:
           -build-and-test
           test2:
