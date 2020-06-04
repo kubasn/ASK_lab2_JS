@@ -7,6 +7,10 @@ jobs:
       name: node/default
     steps:
       - checkout
+      - setup_remote_docker
+ - run:
+ name: Build docker containers
+ command: docker-compose up -d
       - node/install-packages:
           app-dir: ./server
       - run:
