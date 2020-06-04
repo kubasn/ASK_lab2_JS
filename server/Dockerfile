@@ -5,7 +5,9 @@ WORKDIR /home/node/app
 USER node
 
 COPY --chown=node:node package*.json ./
-RUN npm install --only=prod
+COPY --chown=node:node package-lock.json ./
+COPY --chown=node:node ./tests ./tests
+RUN npm install 
 
 COPY --chown=node:node ./src ./src
 
