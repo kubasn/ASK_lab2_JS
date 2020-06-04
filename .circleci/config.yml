@@ -10,6 +10,8 @@ jobs:
       
       
       test1:
+       executor: 
+      name: node/default
       - node/install-packages:
           app-dir: ./server
       - run:
@@ -19,6 +21,8 @@ jobs:
           command: npm test
           working_directory: ./server
     test2:
+     executor: 
+      name: node/default
     - run:
           command: npm install
           working_directory: ./client
